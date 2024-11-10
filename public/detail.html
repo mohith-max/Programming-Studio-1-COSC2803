@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Trends Over Time</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js" defer></script> <!-- Include script.js -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="logo.png" alt="NSW Waste Management Logo">
+            </div>
+            <div class="nav-right">
+                <nav class="nav-links">
+                    <a href="index.html">About</a>
+                    <a href="dataoverview.html">Data</a>
+                    <a href="detail.html">Reports</a>
+                    <a href="#">Contact</a>
+                </nav>
+                <button class="sign-up-btn">Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+<!-- Chart Section -->
+<section class="chart-section">
+    <h2>Waste Trends Over Time</h2>
+    <p>Visualize waste and recycling trends for key LGAs. Track performance changes year by year to see improvements in waste management.</p>
+    <div class="chart-container">
+        <canvas id="wasteTrendsChart"></canvas>
+    </div>
+</section>
+
+
+
+<script>
+    // script.js
+document.addEventListener("DOMContentLoaded", () => {
+    loadWasteTrendsChart(); // Load initial chart data
+});
+
+async function loadWasteTrendsChart() {
+    try {
+        // Fetch data from the backend
+        const response = await fetch("http://localhost:3000/api/waste_trends");
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        // Check if no data is returned
+        if (data.length === 0) {
+            alert("No data found.");
+            return;
+        }
+
+        // Process data for the chart
+        const labels = [...new Set(data.map(row => row.time_period))]; // Unique time periods
+        const lgas = [...new Set(data.map(row => row.lga))]; // Unique LGAs
+
+        const datasets = [];
+
+        // Create datasets for each LGA's waste collected and recycled
+        lgas.forEach(lga => {
+            const wasteCollectedData = labels.map(label => {
+                const record = data.find(row => row.lga === lga && row.time_period === label);
+                return record ? record.waste_collection : null;
+            });
+            const wasteRecycledData = labels.map(label => {
+                const record = data.find(row => row.lga === lga && row.time_period === label);
+                return record ? record.waste_recycled : null;
+            });
+
+            // Add datasets for waste collected and recycled for each LGA
+            datasets.push({
+                label: `${lga} (Waste Collected)`,
+                data: wasteCollectedData,
+                borderColor: getRandomColor(),
+                fill: false
+            });
+            datasets.push({
+                label: `${lga} (Waste Recycled)`,
+                data: wasteRecycledData,
+                borderColor: getRandomColor(),
+                borderDash: [5, 5],
+                fill: false
+            });
+        });
+
+        const ctx = document.getElementById('wasteTrendsChart').getContext('2d');
+
+        // Create the chart
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: 'Time Period' } },
+                    y: { beginAtZero: true, title: { display: true, text: 'Tonnes' } }
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error loading waste trends data:", error);
+        alert("An error occurred while loading data. Check the console for details.");
+    }
+}
+
+// Helper function to generate random colors for each dataset
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+</script>
+
+<!-- Regional Comparisons Section -->
+<section class="chart-section">
+    <h2>Regional Comparisons</h2>
+    <p>Compare recycling rates across different Local Government Areas. See how high-performing regions</p>
+    <div class="chart-container">
+        <!-- Recycling Rates Scatter Plot -->
+        <div class="chart-box">
+            <canvas id="recyclingRateChart"></canvas>
+        </div>
+        <!-- Total Waste Collected Bar Chart -->
+        <div class="chart-box">
+            <canvas id="totalWasteCollectedChart"></canvas>
+        </div>
+    </div>
+</section>
+
+<script>
+    // script.js
+document.addEventListener("DOMContentLoaded", () => {
+    loadRecyclingRatesChart();      // Load Recycling Rates Scatter Plot
+    loadTotalWasteCollectedChart();  // Load Total Waste Collected Bar Chart
+});
+
+// Load the Recycling Rates Scatter Plot
+async function loadRecyclingRatesChart() {
+    try {
+        const response = await fetch("http://localhost:3000/api/recycling_rates");
+        const data = await response.json();
+
+        // Process data for scatter plot
+        const scatterData = data.map(row => ({
+            x: row.recycling_rate,
+            y: Math.random() * 50000, // Placeholder value since organic waste data is unavailable
+            label: row.lga
+        }));
+
+        const recyclingRateCtx = document.getElementById('recyclingRateChart').getContext('2d');
+        new Chart(recyclingRateCtx, {
+            type: 'scatter',
+            data: {
+                datasets: scatterData.map(item => ({
+                    label: item.label,
+                    data: [{ x: item.x, y: item.y }],
+                    backgroundColor: getRandomColor()
+                }))
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { title: { display: true, text: 'Recycling Rate (%)' } },
+                    y: { beginAtZero: true, title: { display: true, text: 'Dummy Organic Waste Value (Tonnes)' } }
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error loading recycling rates data:", error);
+        alert("An error occurred while loading recycling rates data.");
+    }
+}
+
+// Load the Total Waste Collected Bar Chart
+async function loadTotalWasteCollectedChart() {
+    try {
+        const response = await fetch("http://localhost:3000/api/total_waste_collected");
+        const data = await response.json();
+
+        // Extract labels and datasets
+        const labels = data.map(row => row.lga);
+        const wasteCollectedData = data.map(row => row.waste_collected);
+        const wasteRecycledData = data.map(row => row.waste_recycled);
+
+        const totalWasteCollectedCtx = document.getElementById('totalWasteCollectedChart').getContext('2d');
+        new Chart(totalWasteCollectedCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Waste Collected (Tonnes)',
+                        data: wasteCollectedData,
+                        backgroundColor: '#32CD32'
+                    },
+                    {
+                        label: 'Waste Recycled (Tonnes)',
+                        data: wasteRecycledData,
+                        backgroundColor: '#2196F3'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'Tonnes' } } }
+            }
+        });
+    } catch (error) {
+        console.error("Error loading total waste collected data:", error);
+        alert("An error occurred while loading total waste collected data.");
+    }
+}
+
+// Helper function to generate random colors
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+</script>
+
+<!-- Recycling Performance Table Section -->
+<section class="recycling-performance-section">
+    <h2>Recycling Performance Across Key NSW Local Government Areas</h2>
+    <p>Analyze the recycling performance across key LGAs in NSW. Gain insights into which regions are excelling in waste management and recycling practices.</p>
+    <div class="table-container">
+        <div class="data-table-container">
+            <table class="data-table" id="recyclingDataTable">
+                <thead>
+                    <tr>
+                        <th>LGA</th>
+                        <th>Waste Collected (tonnes)</th>
+                        <th>Recycled (tonnes)</th>
+                        <th>Percentage Recycled (%)</th>
+                        <th>Organics Collected (tonnes)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Filter Button with Icon -->
+        <div class="filter-button-container">
+            <button class="filter-btn" onclick="openModal()">
+                <i class="fa fa-filter"></i> Filter
+            </button>
+        </div>
+    </div>
+
+    <div class="download-buttons">
+        <button class="csv-btn" onclick="downloadCSV()">CSV file</button>
+        <button class="pdf-btn" onclick="downloadPDF()">PDF report</button>
+    </div>
+</section>
+
+<!-- Filter Modal -->
+<div class="modal" id="filterModal">
+    <div class="modal-content">
+        <h3>Filter Data by Year</h3>
+        <label for="timePeriod">Time Period</label>
+        <select id="timePeriod">
+            <option value="">All Years</option>
+        </select>
+        <button class="modal-close" onclick="applyFilter()">Apply Filter</button>
+        <button class="modal-close" onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+<script>document.addEventListener("DOMContentLoaded", () => {
+    loadTimePeriods();    // Load year filter options
+    loadRecyclingData();  // Load initial data
+});
+
+// Function to load unique time periods for the filter dropdown
+async function loadTimePeriods() {
+    try {
+        const response = await fetch("http://localhost:3000/api/time_periods");
+        const timePeriods = await response.json();
+        
+        const timePeriodSelect = document.getElementById("timePeriod");
+        timePeriods.forEach(period => {
+            const option = document.createElement("option");
+            option.value = period;
+            option.textContent = period;
+            timePeriodSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error loading time periods:", error);
+    }
+}
+
+// Function to load recycling data based on selected time period
+async function loadRecyclingData(timePeriod = '') {
+    const url = timePeriod ? `http://localhost:3000/api/recycling_performance_data?timePeriod=${timePeriod}` : `http://localhost:3000/api/recycling_performance_data`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const tableBody = document.querySelector("#recyclingDataTable tbody");
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${row.lga}</td>
+                <td>${row.waste_collected.toLocaleString()}</td>
+                <td>${row.recycled.toLocaleString()}</td>
+                <td>${row.recycling_percentage}%</td>
+                <td>${row.organics_collected ? row.organics_collected.toLocaleString() : 'N/A'}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    } catch (error) {
+        console.error("Error loading recycling data:", error);
+    }
+}
+
+// Open and Close Modal
+function openModal() { document.getElementById('filterModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('filterModal').style.display = 'none'; }
+
+// Apply filter and reload table data based on the selected time period
+function applyFilter() {
+    const timePeriod = document.getElementById("timePeriod").value;
+    loadRecyclingData(timePeriod);
+    closeModal();
+}
+
+// CSV Download Function
+function downloadCSV() {
+    let csv = Array.from(document.querySelectorAll("table tr")).map(row => 
+        Array.from(row.querySelectorAll("th, td")).map(cell => cell.innerText).join(",")).join("\n");
+    const link = document.createElement("a");
+    link.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+    link.download = "Recycling_Performance.csv";
+    link.click();
+}
+
+// PDF Download Function
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Recycling Performance Report", 10, 10);
+    doc.autoTable({
+        head: [['LGA', 'Waste Collected (tonnes)', 'Recycled (tonnes)', 'Percentage Recycled (%)', 'Organics Collected (tonnes)']],
+        body: Array.from(document.querySelectorAll("table tbody tr")).map(row => 
+            Array.from(row.querySelectorAll("td")).map(cell => cell.innerText)
+        )
+    });
+    doc.save("Recycling_Performance.pdf");
+}
+</script>
+<footer class="footer">
+    <br>
+    <br>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Data</a>
+            <a href="#">Report</a>
+            <h3> NSW Waste Management Initiative</h3>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <br>
+    <div class="footer-line"></div>
+    <br>
+    <div class="footer-content">
+        <div class="footer-icons">
+            <a href="#"><i class="fa fa-facebook" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-instagram" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-twitter" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-linkedin" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+        </div>
+        <br>
+        <p class="footer-text">&copy; 2010 — 2020 Privacy — Terms</p>
+    </div>
+</footer>
+
+</body>
+
+</html>

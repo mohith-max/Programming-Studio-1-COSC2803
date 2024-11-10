@@ -1,0 +1,797 @@
+ /* Reset */
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Body */
+body {
+    color: #333;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background-color: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .logo img {
+    width: 40px;
+    height: 40px;
+}
+
+.navbar .nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .nav-links {
+    display: flex;
+    margin-right: 20px;
+}
+
+.navbar .nav-links a {
+    margin: 0 15px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+.navbar .sign-up-btn {
+    padding: 10px 20px;
+    border: 2px solid #006400;
+    color: #006400;
+    border-radius: 5px;
+    font-weight: bold;
+    background-color: white;
+    transition: 0.3s;
+}
+
+.navbar .sign-up-btn:hover {
+    background-color: #006400;
+    color: white;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: #f2f2f2;
+}
+
+.hero h1 {
+    font-size: 2.5em;
+    color: #006400;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+}
+
+.hero .cta-button {
+    padding: 15px 30px;
+    background-color: #32CD32;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.hero .cta-button:hover {
+    background-color: #256a2e;
+}
+
+/* Statistics Section */
+.statistics {
+background-color: #e0e0e0;
+padding: 60px 20px;
+text-align: center;
+}
+
+.statistics h2 {
+font-size: 2em;
+margin-bottom: 20px;
+}
+
+.statistics p {
+font-size: 1.1em;
+margin-bottom: 40px;
+}
+
+/* Headings row styling */
+.stats-headings {
+display: flex;
+justify-content: center;
+gap: 30px;
+margin-bottom: 10px;
+font-weight: bold;
+color: #333;
+}
+
+.stats-headings h3 {
+width: 250px;
+font-size: 1.2em;;
+}
+
+/* Stats cards styling */
+.stats-cards {
+display: flex;
+justify-content: center;
+gap: 30px;
+flex-wrap: wrap;
+}
+
+.stat-card {
+width: 250px;
+padding: 30px 20px;
+border-radius: 8px;
+color: black;
+font-weight: bold;
+text-align: center;
+}
+
+.stat-card p {
+font-size: 1em;
+padding-top:10px;
+
+
+}
+/* Specific colors for each card */
+.total-waste {
+    background-color: #ff000099;
+    }
+    
+    .total-recycled {
+    background-color: #32CD32;
+    }
+.total-organics {
+    background-color: #D2691E;
+}
+
+.percentage-recycled {
+    background-color: #32CD32;
+ 
+}
+
+.waste-landfill {
+    background-color: #32CD32;
+   
+}
+
+.energy-recovered {
+    background-color: #FFD700;
+}
+
+
+.recycling-rate {
+background-color: #32cd32b1;
+}
+.map-section {
+background-color: #F2F2F2;
+padding: 60px 20px;
+text-align: center;
+text-align: center;
+padding: 20px;
+}
+
+.map-section h2 {
+font-size: 2em;
+margin-bottom: 20px;
+}
+
+.map-section p {
+font-size: 1.1em;
+color: #555;
+margin-bottom: 30px;
+}
+
+/* Map container styling */
+.map-container {
+position: relative;
+max-width: 1000px;
+margin: 0 auto;
+padding: 20px;
+}
+
+.map-image {
+width: 100%;
+max-width: 1000px;
+height: auto;
+border: 2px solid #ccc;
+border-radius: 10px;
+}
+
+/* Label styling */
+.map-label {
+position: absolute;
+background-color: white;
+color: black;
+padding: 10px;
+font-size: 0.9em;
+border-radius: 5px;
+box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+max-width: 200px;
+}
+
+/* Button styling */
+.explore-btn {
+    background-color: #32CD32;
+    color: white;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    margin:20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block; /* Make button behave like a block element */
+    margin: 0 auto; /* Center-align the button */
+    }
+    
+    .explore-btn:hover {
+    background-color: #006400;
+    }
+/* Footer Styling */
+.footer {
+background-color: #333;
+color: #fff;
+padding: 20px 0;
+font-family: 'Roboto', sans-serif;
+text-align: center;
+}
+
+.footer-line {
+width: 80%;
+height: 1px;
+background-color: #777;
+margin: 0 auto 20px;
+}
+.footer-content {
+display: flex;
+flex-direction: column;
+align-items: center;
+
+}
+.footer .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 20px;
+}
+
+.footer .footer-links a {
+    color: #ccc;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-size: 14px;
+}
+
+
+.footer-links a:hover {
+color: #fff;
+}
+
+.footer-icons {
+margin: 10px 0;
+}
+
+.footer-icons a {
+color: #aaa;
+margin: 0 10px;
+font-size: 18px;
+text-decoration: none;
+}
+
+.footer-icons a:hover {
+color: #fff;
+}
+
+.footer-text {
+color: #777;
+font-size: 14px;
+margin-top: 10px;
+}
+
+.fa:hover {
+opacity: 0.7;
+}
+/* Styling for the map container */
+#map {
+    height: 600px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h1{
+    font-size: 2em;
+    margin-bottom: 10px;
+    text-align: center;
+}
+h2{
+    font-size: 2em;
+     margin-bottom: 10px;
+    text-align: center;
+}
+p{
+    font-size: 1.1em;
+    margin-top: 10px;
+    padding-bottom:5px;
+    margin: 0 auto 30px;
+    margin-bottom: 8px;
+}
+
+/* Filters Section */
+.filters label{
+    color: #006400;
+    font-weight: bold;
+    }
+    
+    .filter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    }
+    
+    .filter-dropdown {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 180px; /* Adjust width for consistency */
+    }
+    .filter-dropdown, .filter-checkboxes {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        width: 200px;
+    }
+    .filters-section {
+        text-align: center;
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: auto;
+        margin-top: 30px;
+    }
+    
+    .filters-section h1 {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+    
+    .filters-section p {
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 20px;
+    }
+    
+    .filters {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+        flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    
+    }
+    
+    .filter-item label {
+        margin-bottom: 8px;
+        font-size: 1em;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .filter-dropdown {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        width: 200px;
+    }
+    
+    .filter-checkboxes {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 200px;
+    }
+    
+    .filter-checkboxes label {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        font-size: 0.9em;
+    }
+    
+    .filter-checkboxes input {
+        margin-right: 8px;
+    }
+
+    /* Filter Button Styling */
+.filter-btn {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    background-color: #006400;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filter-btn:hover {
+    background-color: #004d00;
+}
+
+/* Waste and Recycling Overview Section */
+.overview-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+/* Overview Cards */
+.overview-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.overview-card {
+    width: 400px;
+    padding: 20px;
+    border-radius: 8px;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.overview-card h3 {
+    font-size: 1.8em;
+    margin-bottom: 5px;
+}
+
+
+
+/* Recycling Performance */
+.recycling-performance {
+    background-color: #D3D3D3;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.recycling-performance-section {
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.recycling-performance-section h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.recycling-performance-section p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* Waste Breakdown */
+.waste-breakdown {
+text-align: center;
+padding: 60px 20px;
+background-color: #f8f8f8;
+}
+.waste-breakdown p {
+font-size: 1.1em;
+color: #555;
+margin: 0 auto 30px auto;
+}
+
+.breakdown-cards {
+display: flex;
+justify-content: center;
+gap: 30px;
+flex-wrap: wrap;
+}
+
+.breakdown-card {
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+width: 200px;
+padding: 20px;
+}
+.breakdown-card h3 {
+    font-size: 1.2em;
+    margin-top: 10px;
+    font-weight: bold;
+    }
+    
+    .breakdown-card p {
+    font-size: 1em;
+    color: #555;
+    margin-top: 5px;
+    }
+
+/* Circle Progress Styling */
+.circle {
+position: relative;
+width: 120px;
+height: 120px;
+}
+
+.circle svg {
+width: 100%;
+height: 100%;
+transform: rotate(-90deg); /* Rotates to start from the top */
+}
+
+.circle circle {
+fill: none;
+stroke-width: 10;
+stroke: #e0e0e0; /* Background color for the track */
+r: 50;
+cx: 60;
+cy: 60;
+}
+
+/* Progress Circle with Rounded Edges */
+.circle circle:last-child {
+stroke: var(--progress-color, #32CD32);
+stroke-dasharray: 314; /* Circumference of the circle */
+stroke-dashoffset: calc(314 * (1 - var(--percentage) / 100));
+transition: stroke-dashoffset 0.3s ease;
+stroke-linecap: round; /* Rounded edges */
+}
+
+.recyclable .circle circle:last-child {
+--percentage: 50;
+--progress-color: #32CD32;
+}
+
+.general-waste .circle circle:last-child {
+--percentage: 30;
+--progress-color: #999;
+}
+
+.organics .circle circle:last-child {
+--percentage: 15;
+--progress-color: #8B4513;
+}
+
+.percentage {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+font-size: 1.5em;
+font-weight: bold;
+color: #333;
+}
+
+/* Table Styles */
+.waste-table {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.waste-table th, .waste-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+}
+
+.waste-table th {
+    background-color: #006400;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.sort-asc::after {
+    content: " ▲";
+}
+
+.sort-desc::after {
+    content: " ▼";
+}
+.table-section{
+padding: 2em;
+background-color: #D3D3D3;
+
+}
+
+
+/* Chart Section Styling */
+.chart-section {
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.chart-section h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.chart-container, .chart-box {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table and Filter Modal Styling */
+.table-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: auto;
+    font-size: 1em;
+    border: 1px solid #ddd;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.data-table th {
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    
+    text-align: center;
+}
+
+/* Download Buttons */
+.download-buttons {
+    margin-top: 20px;
+}
+
+.download-buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.download-buttons .csv-btn {
+    background-color: #32CD32;
+    color: #fff;
+}
+
+.download-buttons .pdf-btn {
+    background-color: #FF6347;
+    color: #fff;
+}
+
+
+/* Chart Containers */
+.chart-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.chart-box {
+    width: 100%;
+    max-width: 500px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Table Styling */
+.data-table-container {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: auto;
+    font-size: 1em;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.data-table th {
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+.data-table td {
+    color: #333;
+}
+

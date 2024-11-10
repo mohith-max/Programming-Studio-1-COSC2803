@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Overview - Waste Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="logo.png" alt="NSW Waste Management Logo">
+            </div>
+            <div class="nav-right">
+                <nav class="nav-links">
+                    <a href="index.html">About</a>
+                    <a href="dataoverview.html">Data</a>
+                    <a href="detail.html">Reports</a>
+                    <a href="#">Contact</a>
+                </nav>
+                <button class="sign-up-btn">Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    
+<!--Filter Section -->
+<section class="filters-section">
+    <h1>Customize Your Data View</h1>
+    <p>Tailor the data you want to see. Select your Local Government Area, waste type, and time period to explore waste collection and recycling performance specific to your community.</p>
+    <div class="filters">
+        <!-- Dropdowns for filters -->
+    <label for="lgaDropdown">LGA Selection</label>
+    <select id="lgaDropdown" class="filter-dropdown">
+        <option value="All">All</option>
+    </select>
+
+    <label for="wasteTypeDropdown">Select Waste Type:</label>
+    <select id="wasteTypeDropdown" class="filter-dropdown">
+        <option value="All">All</option>
+    </select>
+
+    <label for="timePeriodDropdown">Select Time Period:</label>
+    <select id="timePeriodDropdown" class="filter-dropdown">
+        <option value="All">All</option>
+    </select>
+    </div>
+</section>
+    
+<!-- Overview Section -->
+<section id="wasteOverview" class="overview-section">
+    <h1>Waste and Recycling Overview</h1>
+    <p>An overview of the total waste collected, recycled, and organics collected across NSW. Gain insights into the progress made and the challenges ahead in improving recycling rates.</p>
+    
+    <div class="overview-cards">
+        <div class="overview-card total-waste">
+            <h3>Total Waste Collected</h3>
+            <i class="fa fa-trash-o" style="font-size:48px;color:black; padding: 10px"></i>
+            <p><span id="totalWaste">-</span> tonnes</p>
+        </div>
+        <div class="overview-card total-recycled">
+            <h3>Total Recycled</h3>
+            <i class="fa fa-recycle" style="font-size:48px;color:black; padding: 10px"></i>
+            <p> <span id="totalRecycled">-</span> tonnes</p>
+        </div>
+        <div class="overview-card total-organics">
+            <h3>Total Organics Collected</h3>
+            <i class="fa fa-leaf" style="font-size:48px;color:black; padding: 10px"></i>
+            <p><span id="totalOrganics">-</span> tonnes</p>
+        </div>
+        <div class="overview-card percentage-recycled">
+            <h3>Percentage Recycled</h3>
+            <i class="fa fa-recycle" style="font-size:48px;color:black; padding: 10px"></i>
+            <p><span id="recyclePercentage">N/A</span></p>
+        </div>
+        <div class="overview-card waste-landfill">
+            <h3>Waste to Landfill</h3>
+            <i class="fa fa-trash-o" style="font-size:48px;color:black; padding: 10px"></i>
+            <p><span id="totalLandfill">-</span> tonnes</p>
+        </div>
+        <div class="overview-card energy-recovered">
+            <h3>Energy Recovered</h3>
+            <i class="fa fa-bolt" style="font-size:48px;color:black; padding: 10px"></i>
+            <p><span id="totalEnergy">-</span> tonnes</p>
+        </div>
+    </div>
+    </section>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", loadFilters);
+
+    async function loadFilters() {
+        try {
+            const response = await fetch("http://localhost:3000/api/filters");
+            const filters = await response.json();
+
+            const lgaDropdown = document.getElementById("lgaDropdown");
+            filters.lgas.forEach(lga => {
+                const option = document.createElement("option");
+                option.value = lga;
+                option.textContent = lga;
+                lgaDropdown.appendChild(option);
+            });
+
+            const wasteTypeDropdown = document.getElementById("wasteTypeDropdown");
+            filters.wasteTypes.forEach(type => {
+                const option = document.createElement("option");
+                option.value = type;
+                option.textContent = type;
+                wasteTypeDropdown.appendChild(option);
+            });
+
+            const timePeriodDropdown = document.getElementById("timePeriodDropdown");
+            filters.timePeriods.forEach(period => {
+                const option = document.createElement("option");
+                option.value = period;
+                option.textContent = period;
+                timePeriodDropdown.appendChild(option);
+            });
+
+            document.getElementById("lgaDropdown").addEventListener("change", loadWasteOverview);
+            document.getElementById("wasteTypeDropdown").addEventListener("change", loadWasteOverview);
+            document.getElementById("timePeriodDropdown").addEventListener("change", loadWasteOverview);
+
+            loadWasteOverview();
+        } catch (error) {
+            console.error("Error loading filters:", error);
+        }
+    }
+
+    // Load waste overview based on selected filters
+    async function loadWasteOverview() {
+    const lga = document.getElementById("lgaDropdown").value;
+    const wasteType = document.getElementById("wasteTypeDropdown").value;
+    const timePeriod = document.getElementById("timePeriodDropdown").value;
+
+    try {
+        const response = await fetch(`http://localhost:3000/api/waste_overview?lga=${lga}&wasteType=${wasteType}&timePeriod=${timePeriod}`);
+        const data = await response.json();
+
+        // Display overview data in HTML
+        document.getElementById("totalWaste").textContent = data.totalWaste ? data.totalWaste.toLocaleString() : "N/A";
+        document.getElementById("totalRecycled").textContent = data.totalRecycled ? data.totalRecycled.toLocaleString() : "N/A";
+        document.getElementById("totalOrganics").textContent = data.totalOrganics ? data.totalOrganics.toLocaleString() : "N/A";
+        document.getElementById("totalLandfill").textContent = data.totalLandfill ? data.totalLandfill.toLocaleString() : "N/A";
+        document.getElementById("totalEnergy").textContent = data.totalEnergy ? data.totalEnergy.toLocaleString() : "N/A";
+
+        // Handle `recyclePercentage`, defaulting to "N/A" if missing or 0
+        const recyclePercentage = (data.recyclePercentage !== "N/A" && data.recyclePercentage !== null && data.recyclePercentage !== undefined)
+            ? `${data.recyclePercentage}%`
+            : "N/A";
+        document.getElementById("recyclePercentage").textContent = recyclePercentage;
+
+    } catch (error) {
+        console.error("Error loading waste overview data:", error);
+    }
+}
+</script>
+
+  <!-- Recycling Performance Section -->
+  <section class="recycling-performance">
+    <h2>Recycling Performance by Local Government Areas</h2>
+    <p>Compare the recycling performance of various LGAs across NSW. See which regions are leading the way in waste management and where more efforts are needed to boost recycling.</p>
+    <div class="chart-container">
+        <canvas id="recyclingChart"></canvas>
+    </div>
+</section>
+    
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadRecyclingPerformanceChart(); // Load the chart on page load
+    });
+
+    async function loadRecyclingPerformanceChart() {
+        try {
+            const response = await fetch("http://localhost:3000/api/recycling_performance"); // Change this to your correct endpoint
+            const data = await response.json();
+
+            // Prepare data for Chart.js
+            const labels = data.map(row => row.lga_name); // Extract LGA names
+            const wasteData = data.map(row => row.totalWaste); // Extract total waste collected
+            const recycledData = data.map(row => row.totalRecycled); // Extract total recycled
+
+            // Create the chart
+            const ctx = document.getElementById('recyclingChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Waste Collected (tonnes)',
+                            data: wasteData,
+                            backgroundColor: '#f8f8f8', // Grey for total waste collected
+                        },
+                        {
+                            label: 'Total Waste Recycled (tonnes)',
+                            data: recycledData,
+                            backgroundColor: '#32CD32', // Green for total recycled
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += `${context.raw.toLocaleString()} tonnes`;
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Tonnes'
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error("Error loading recycling performance data:", error);
+        }
+    }
+</script>
+
+
+    <!-- Script to load recycling data -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    loadRecyclingPerformance();
+});
+
+async function loadRecyclingPerformance() {
+    try {
+        console.log("Fetching recycling performance data...");
+        
+        const response = await fetch("http://localhost:3000/api/recycling_performance");
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("Data fetched successfully:", data);
+
+        // Ensure we're accessing lga_name correctly
+        const labels = data.map(item => item.lga_name);
+        const totalWasteData = data.map(item => parseFloat(item.totalWaste) || 0);
+        const totalRecycledData = data.map(item => parseFloat(item.totalRecycled) || 0);
+
+        console.log("Labels:", labels);
+        console.log("Total Waste Data:", totalWasteData);
+        console.log("Total Recycled Data:", totalRecycledData);
+
+        const ctx = document.getElementById('recyclingChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Total Waste Collected (tonnes)',
+                        data: totalWasteData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Total Waste Recycled (tonnes)',
+                        data: totalRecycledData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Tonnes'
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error loading recycling performance data:", error);
+    }
+}
+
+</script>
+
+
+<!-- Waste Breakdown Section -->
+<section class="waste-breakdown">
+    <h1>Waste Breakdown by Type</h1>
+    <p>Understand how waste is categorized into recyclable, general waste, and organics. See the percentage of each waste type and the efforts made to reduce landfill dependency.</p>
+    <div class="breakdown-cards">
+        <div class="breakdown-card recyclable">
+            <div class="circle">
+                <svg>
+                    <circle cx="60" cy="60" r="50"></circle>
+                    <circle cx="60" cy="60" r="50" id="recyclable-circle"></circle>
+                </svg>
+                <div class="percentage" id="recyclable-percentage">0%</div>
+            </div>
+            <h3>Recyclable</h3>
+            <p id="recyclable-amount">0 Tonnes</p>
+        </div>
+        <div class="breakdown-card general-waste">
+            <div class="circle">
+                <svg>
+                    <circle cx="60" cy="60" r="50"></circle>
+                    <circle cx="60" cy="60" r="50" id="general-circle"></circle>
+                </svg>
+                <div class="percentage" id="general-percentage">0%</div>
+            </div>
+            <h3>General Waste</h3>
+            <p id="general-amount">0 Tonnes</p>
+        </div>
+        <div class="breakdown-card organics">
+            <div class="circle">
+                <svg>
+                    <circle cx="60" cy="60" r="50"></circle>
+                    <circle cx="60" cy="60" r="50" id="organics-circle"></circle>
+                </svg>
+                <div class="percentage" id="organics-percentage">0%</div>
+            </div>
+            <h3>Organics</h3>
+            <p id="organics-amount">0 Tonnes</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    async function loadWasteBreakdown() {
+        try {
+            const response = await fetch("http://localhost:3000/api/waste_breakdown");
+            const data = await response.json();
+
+            // Update the tonnage values
+            document.getElementById("recyclable-amount").textContent = `${data.recyclable.toLocaleString()} Tonnes`;
+            document.getElementById("general-amount").textContent = `${data.general.toLocaleString()} Tonnes`;
+            document.getElementById("organics-amount").textContent = `${data.organics.toLocaleString()} Tonnes`;
+
+            // Update the percentage values
+            document.getElementById("recyclable-percentage").textContent = `${data.recyclablePercentage}%`;
+            document.getElementById("general-percentage").textContent = `${data.generalPercentage}%`;
+            document.getElementById("organics-percentage").textContent = `${data.organicsPercentage}%`;
+
+            // Update the progress circles
+            document.getElementById("recyclable-circle").style.strokeDashoffset = 314 * (1 - data.recyclablePercentage / 100);
+            document.getElementById("general-circle").style.strokeDashoffset = 314 * (1 - data.generalPercentage / 100);
+            document.getElementById("organics-circle").style.strokeDashoffset = 314 * (1 - data.organicsPercentage / 100);
+        } catch (error) {
+            console.error("Error loading waste breakdown data:", error);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadWasteBreakdown);
+</script>
+
+<section class="table-section">
+    <h2>Waste and Recycling Statistics by LGA</h2>
+    
+    <table class="waste-table" id="wasteTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">LGA</th>
+                <th onclick="sortTable(1, true)">Waste Collected (tonnes)</th>
+                <th onclick="sortTable(2, true)">Recycled (tonnes)</th>
+                <th onclick="sortTable(3, true)">Percentage Recycled (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table data will be dynamically inserted here -->
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <button class="explore-btn">View Detailed Analysis</button>
+</section>
+
+<script>
+    // Fetch waste statistics from the server and populate the table
+    async function loadWasteStatistics() {
+        try {
+            const response = await fetch("http://localhost:3000/api/waste_statistics");
+            const data = await response.json();
+
+            const tableBody = document.getElementById("wasteTable").querySelector("tbody");
+            tableBody.innerHTML = ""; // Clear any existing rows
+
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${row.lga}</td>
+                    <td>${row.wasteCollected.toLocaleString()}</td>
+                    <td>${row.recycled.toLocaleString()}</td>
+                    <td>${row.recyclePercentage !== null ? row.recyclePercentage + '%' : 'N/A'}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        } catch (error) {
+            console.error("Error loading waste statistics:", error);
+        }
+    }
+
+    // Sorting function
+    let sortDirection = {};
+
+    function sortTable(columnIndex, isNumeric = false) {
+        const table = document.getElementById("wasteTable");
+        const rowsArray = Array.from(table.tBodies[0].rows);
+        const isAscending = sortDirection[columnIndex] !== true;
+        sortDirection[columnIndex] = isAscending;
+
+        rowsArray.sort((a, b) => {
+            let cellA = a.cells[columnIndex].textContent.trim();
+            let cellB = b.cells[columnIndex].textContent.trim();
+
+            if (isNumeric) {
+                cellA = parseFloat(cellA.replace(/,/g, '')) || 0;
+                cellB = parseFloat(cellB.replace(/,/g, '')) || 0;
+            }
+
+            if (cellA > cellB) return isAscending ? 1 : -1;
+            if (cellA < cellB) return isAscending ? -1 : 1;
+            return 0;
+        });
+
+        // Remove current rows and re-add them in sorted order
+        while (table.tBodies[0].firstChild) {
+            table.tBodies[0].removeChild(table.tBodies[0].firstChild);
+        }
+
+        rowsArray.forEach(row => table.tBodies[0].appendChild(row));
+
+        // Update sorting indicators on header
+        const headers = table.querySelectorAll("th");
+        headers.forEach((header, index) => {
+            header.classList.remove("sort-asc", "sort-desc");
+            if (index === columnIndex) {
+                header.classList.add(isAscending ? "sort-asc" : "sort-desc");
+            }
+        });
+    }
+
+    // Load data on page load
+    document.addEventListener("DOMContentLoaded", loadWasteStatistics);
+</script>
+<footer class="footer">
+    <br>
+    <br>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Data</a>
+            <a href="#">Report</a>
+            <h3> NSW Waste Management Initiative</h3>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <br>
+    <div class="footer-line"></div>
+    <br>
+    <div class="footer-content">
+        <div class="footer-icons">
+            <a href="#"><i class="fa fa-facebook" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-instagram" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-twitter" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-linkedin" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+        </div>
+        <br>
+        <p class="footer-text">&copy; 2010 — 2020 Privacy — Terms</p>
+    </div>
+</footer>
+
+
+</body>
+</html>

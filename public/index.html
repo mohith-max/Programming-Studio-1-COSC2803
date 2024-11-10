@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSW Recycling Performance Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="logo.png" alt="NSW Waste Management Logo">
+            </div>
+            <div class="nav-right">
+                <nav class="nav-links">
+                    <a href="index.html">About</a>
+                    <a href="dataoverview.html">Data</a>
+                    <a href="detail.html">Reports</a>
+                    <a href="#">Contact</a>
+                </nav>
+                <button class="sign-up-btn">Sign Up</button>
+            </div>
+        </div>
+    </header>
+    <body>
+        <section class="hero">
+            <h1>Managing Waste, Shaping the Future of NSW</h1>
+            <p>Together, we can create a cleaner, greener New South Wales by managing waste more efficiently and increasing recycling efforts. Join us in building a sustainable future for our communities.</p>
+            <button class="cta-button">Get Started</button>
+        </section>
+        
+        <section class="statistics">
+            <h2>Key Waste & Recycling Statistics</h2>
+            <p>We are committed to reducing waste and boosting recycling rates across NSW. Explore our initiatives, view data on waste management, and learn how your local government is contributing to a more sustainable future.</p>
+            
+            <div class="stats-headings">
+                <h3>Total Waste Collected</h3>
+                <h3>Total Recycled</h3>
+                <h3>Recycling Rate</h3>
+            </div>
+        
+            <div class="stats-cards">
+                <div class="stat-card total-waste">
+                    <i class="fa fa-trash-o" style="font-size:48px;color:black; padding: 10px;"></i>
+                    <h3>Loading...</h3> <!-- JavaScript will replace this -->
+                    <p>Discover how much waste has been collected across the state and how we’re working to reduce it.</p>
+                </div>
+                <div class="stat-card total-recycled">
+                    <i class="fa fa-recycle" style="font-size:48px;color:black; padding: 10px"></i>
+                    <h3>Loading...</h3> <!-- JavaScript will replace this -->
+                    <p>Explore the progress we’ve made in recycling, with a clear focus on increasing these numbers year after year.</p>
+                </div>
+                <div class="stat-card recycling-rate">
+                    <i class="fa fa-recycle" style="font-size:48px;color:black; padding: 10px"></i>
+                    <h3>Loading...</h3> <!-- JavaScript will replace this -->
+                    <p>Our mission is to push recycling rates even higher, and we’re committed to supporting every community in NSW to achieve their goals.</p>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", loadWasteStatistics);
+        
+            async function loadWasteStatistics() {
+                try {
+                    const response = await fetch("http://localhost:3000/api/waste_statistics_summary");
+                    const data = await response.json();
+        
+                    // Update the statistics section with data from the database
+                    document.querySelector(".total-waste h3").textContent = `${data.totalWaste.toLocaleString()} tonnes`;
+                    document.querySelector(".total-recycled h3").textContent = `${data.totalRecycled.toLocaleString()} tonnes`;
+                    document.querySelector(".recycling-rate h3").textContent = data.recyclingRate !== "N/A" ? `${data.recyclingRate}%` : "N/A";
+                } catch (error) {
+                    console.error("Error loading waste statistics:", error);
+                }
+            }
+        </script>
+
+        <section class="map-section">
+            <h2>Recycling Performance Across NSW Local Government Areas</h2>
+            <p>Dive deeper into the data. Learn how each Local Government Area is performing in waste collection and recycling efforts. See the difference in how communities are working towards better sustainability.</p>
+            <div id="map"></div>
+            <button class="explore-btn">Explore Recycling Stats</button>
+        </section>
+
+
+
+<script>
+    // Initialize the map
+    const map = L.map('map').setView([-33.8688, 151.2093], 7); // Center around Sydney
+
+    // Add a tile layer from OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Function to load recycling performance data from the server
+    async function loadRecyclingPerformance() {
+        try {
+            const response = await fetch('http://localhost:3000/api/recycling_performance_map');
+            const data = await response.json();
+
+            // Add markers to the map for each LGA
+            data.forEach(lga => {
+                if (lga.latitude && lga.longitude) {
+                    const marker = L.marker([lga.latitude, lga.longitude]).addTo(map);
+                    marker.bindPopup(`
+                        <strong>${lga.name}</strong><br>
+                        Population: ${lga.population}<br>
+                        Waste Collected: ${lga.waste} tonnes<br>
+                        Recycled: ${lga.recycled} tonnes<br>
+                        Recycling Rate: ${lga.rate}%
+                    `);
+                }
+            });
+        } catch (error) {
+            console.error("Error loading recycling performance data:", error);
+        }
+    }
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', loadRecyclingPerformance);
+</script>
+<footer class="footer">
+    <br>
+    <br>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Data</a>
+            <a href="#">Report</a>
+            <h3> NSW Waste Management Initiative</h3>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <br>
+    <div class="footer-line"></div>
+    <br>
+    <div class="footer-content">
+        <div class="footer-icons">
+            <a href="#"><i class="fa fa-facebook" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-instagram" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-twitter" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-linkedin" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+        </div>
+        <br>
+        <p class="footer-text">&copy; 2010 — 2020 Privacy — Terms</p>
+    </div>
+</footer>
+</body>
+</html>

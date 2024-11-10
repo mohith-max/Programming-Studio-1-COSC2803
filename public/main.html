@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSW Recycling Performance Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        /* Reset */
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Body */
+body {
+    color: #333;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background-color: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .logo img {
+    width: 40px;
+    height: 40px;
+}
+
+.navbar .nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .nav-links {
+    display: flex;
+    margin-right: 20px;
+}
+
+.navbar .nav-links a {
+    margin: 0 15px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+.navbar .sign-up-btn {
+    padding: 10px 20px;
+    border: 2px solid #006400;
+    color: #006400;
+    border-radius: 5px;
+    font-weight: bold;
+    background-color: white;
+    transition: 0.3s;
+}
+
+.navbar .sign-up-btn:hover {
+    background-color: #006400;
+    color: white;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: #f2f2f2;
+}
+
+.hero h1 {
+    font-size: 2.5em;
+    color: #006400;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+}
+
+.hero .cta-button {
+    padding: 15px 30px;
+    background-color: #32CD32;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.hero .cta-button:hover {
+    background-color: #256a2e;
+}
+
+/* Statistics Section */
+.statistics {
+background-color: #e0e0e0;
+padding: 60px 20px;
+text-align: center;
+}
+
+.statistics h2 {
+font-size: 2em;
+margin-bottom: 20px;
+}
+
+.statistics p {
+font-size: 1.1em;
+margin-bottom: 40px;
+}
+
+/* Headings row styling */
+.stats-headings {
+display: flex;
+justify-content: center;
+gap: 30px;
+margin-bottom: 10px;
+font-weight: bold;
+color: #333;
+}
+
+.stats-headings h3 {
+width: 250px;
+font-size: 1.2em;;
+}
+
+/* Stats cards styling */
+.stats-cards {
+display: flex;
+justify-content: center;
+gap: 30px;
+flex-wrap: wrap;
+}
+
+.stat-card {
+width: 250px;
+padding: 30px 20px;
+border-radius: 8px;
+color: black;
+font-weight: bold;
+text-align: center;
+}
+
+.stat-card p {
+font-size: 1em;
+padding-top:10px;
+
+
+}
+
+.total-waste {
+background-color: #ff000099;
+}
+
+.total-recycled {
+background-color: #32CD32;
+}
+
+.recycling-rate {
+background-color: #32cd32b1;
+}
+.map-section {
+background-color: #F2F2F2;
+padding: 60px 20px;
+text-align: center;
+}
+
+.map-section h2 {
+font-size: 2em;
+margin-bottom: 20px;
+}
+
+.map-section p {
+font-size: 1.1em;
+color: #555;
+margin-bottom: 30px;
+}
+
+/* Map container styling */
+.map-container {
+position: relative;
+max-width: 1000px;
+margin: 0 auto;
+padding: 20px;
+}
+
+.map-image {
+width: 100%;
+max-width: 1000px;
+height: auto;
+border: 2px solid #ccc;
+border-radius: 10px;
+}
+
+/* Label styling */
+.map-label {
+position: absolute;
+background-color: white;
+color: black;
+padding: 10px;
+font-size: 0.9em;
+border-radius: 5px;
+box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+max-width: 200px;
+}
+
+/* Button styling */
+.explore-btn {
+background-color: #32CD32;
+color: white;
+font-size: 1.2em;
+padding: 10px 20px;
+margin-top: 20px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.explore-btn:hover {
+background-color: #36f136;
+}
+/* Footer Styling */
+.footer {
+background-color: #333;
+color: #fff;
+padding: 20px 0;
+font-family: 'Roboto', sans-serif;
+text-align: center;
+}
+
+.footer-line {
+width: 80%;
+height: 1px;
+background-color: #777;
+margin: 0 auto 20px;
+}
+.footer-content {
+display: flex;
+flex-direction: column;
+align-items: center;
+
+}
+.footer .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 20px;
+}
+
+.footer .footer-links a {
+    color: #ccc;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-size: 14px;
+}
+
+
+.footer-links a:hover {
+color: #fff;
+}
+
+.footer-icons {
+margin: 10px 0;
+}
+
+.footer-icons a {
+color: #aaa;
+margin: 0 10px;
+font-size: 18px;
+text-decoration: none;
+}
+
+.footer-icons a:hover {
+color: #fff;
+}
+
+.footer-text {
+color: #777;
+font-size: 14px;
+margin-top: 10px;
+}
+
+.fa:hover {
+opacity: 0.7;
+}
+/* Styling for the map container */
+#map {
+    height: 600px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+.map-section {
+    text-align: center;
+    padding: 20px;
+}
+.explore-btn {
+    margin-top: 20px;
+    background-color: #32CD32;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+.explore-btn:hover {
+    background-color: #1e6b2d;
+}
+</style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="logo.png" alt="NSW Waste Management Logo">
+            </div>
+            <div class="nav-right">
+                <nav class="nav-links">
+                    <a href="#">About</a>
+                    <a href="#">Data</a>
+                    <a href="#">Reports</a>
+                    <a href="#">Contact</a>
+                </nav>
+                <button class="sign-up-btn">Sign Up</button>
+            </div>
+        </div>
+    </header>
+    <body>
+        <section class="hero">
+            <h1>Managing Waste, Shaping the Future of NSW</h1>
+            <p>Together, we can create a cleaner, greener New South Wales by managing waste more efficiently and increasing recycling efforts. Join us in building a sustainable future for our communities.</p>
+            <button class="cta-button">Get Started</button>
+        </section>
+        
+        <section class="statistics">
+            <h2>Key Waste & Recycling Statistics</h2>
+            <p>We are committed to reducing waste and boosting recycling rates across NSW. Explore our initiatives, view data on waste management, and learn how your local government is contributing to a more sustainable future.</p>
+            
+            <div class="stats-headings">
+                <h3>Total Waste Collected</h3>
+                <h3>Total Recycled</h3>
+                <h3>Recycling Rate</h3>
+            </div>
+        
+            <div class="stats-cards">
+                <div class="stat-card total-waste">
+                    <i class="fa fa-trash-o" style="font-size:48px;color:black; padding: 10px;"></i>
+                    <h3>Loading...</h3> <!-- JavaScript will replace this -->
+                    <p>Discover how much waste has been collected across the state and how we’re working to reduce it.</p>
+                </div>
+                <div class="stat-card total-recycled">
+                    <i class="fa fa-recycle" style="font-size:48px;color:black; padding: 10px"></i>
+                    <h3>Loading...</h3> <!-- JavaScript will replace this -->
+                    <p>Explore the progress we’ve made in recycling, with a clear focus on increasing these numbers year after year.</p>
+                </div>
+                <div class="stat-card recycling-rate">
+                    <i class="fa fa-recycle" style="font-size:48px;color:black; padding: 10px"></i>
+                    <h3>Loading...</h3> <!-- JavaScript will replace this -->
+                    <p>Our mission is to push recycling rates even higher, and we’re committed to supporting every community in NSW to achieve their goals.</p>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", loadWasteStatistics);
+        
+            async function loadWasteStatistics() {
+                try {
+                    const response = await fetch("http://localhost:3000/api/waste_statistics_summary");
+                    const data = await response.json();
+        
+                    // Update the statistics section with data from the database
+                    document.querySelector(".total-waste h3").textContent = `${data.totalWaste.toLocaleString()} tonnes`;
+                    document.querySelector(".total-recycled h3").textContent = `${data.totalRecycled.toLocaleString()} tonnes`;
+                    document.querySelector(".recycling-rate h3").textContent = data.recyclingRate !== "N/A" ? `${data.recyclingRate}%` : "N/A";
+                } catch (error) {
+                    console.error("Error loading waste statistics:", error);
+                }
+            }
+        </script>
+
+        <section class="map-section">
+            <h2>Recycling Performance Across NSW Local Government Areas</h2>
+            <p>Dive deeper into the data. Learn how each Local Government Area is performing in waste collection and recycling efforts. See the difference in how communities are working towards better sustainability.</p>
+            <div id="map"></div>
+            <button class="explore-btn">Explore Recycling Stats</button>
+        </section>
+
+
+
+<script>
+    // Initialize the map
+    const map = L.map('map').setView([-33.8688, 151.2093], 7); // Center around Sydney
+
+    // Add a tile layer from OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Function to load recycling performance data from the server
+    async function loadRecyclingPerformance() {
+        try {
+            const response = await fetch('http://localhost:3000/api/recycling_performance_map');
+            const data = await response.json();
+
+            // Add markers to the map for each LGA
+            data.forEach(lga => {
+                if (lga.latitude && lga.longitude) {
+                    const marker = L.marker([lga.latitude, lga.longitude]).addTo(map);
+                    marker.bindPopup(`
+                        <strong>${lga.name}</strong><br>
+                        Population: ${lga.population}<br>
+                        Waste Collected: ${lga.waste} tonnes<br>
+                        Recycled: ${lga.recycled} tonnes<br>
+                        Recycling Rate: ${lga.rate}%
+                    `);
+                }
+            });
+        } catch (error) {
+            console.error("Error loading recycling performance data:", error);
+        }
+    }
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', loadRecyclingPerformance);
+</script>
+<footer class="footer">
+    <br>
+    <br>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Data</a>
+            <a href="#">Report</a>
+            <h3> NSW Waste Management Initiative</h3>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <br>
+    <div class="footer-line"></div>
+    <br>
+    <div class="footer-content">
+        <div class="footer-icons">
+            <a href="#"><i class="fa fa-facebook" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-instagram" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-twitter" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+            <a href="#"><i class="fa fa-linkedin" style="font-size:20px;outline-style: solid; padding:10px;border-radius: 50%;"></i></a>
+        </div>
+        <br>
+        <p class="footer-text">&copy; 2010 — 2020 Privacy — Terms</p>
+    </div>
+</footer>
+</body>
+</html>
